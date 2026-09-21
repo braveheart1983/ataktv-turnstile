@@ -18,20 +18,15 @@
     h3 { color: #38BDF8; font-weight: 500; }
     .container { text-align: center; padding: 20px; }
     .loading { color: #94A3B8; font-size: 14px; }
-    .error { color: #EF9A9A; font-size: 14px; margin-top: 10px; }
   </style>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </head>
 <body>
   <div class="container">
     <h3>🔒 Güvenlik Doğrulaması</h3>
     <p class="loading">Lütfen bekleyin...</p>
-    <div class="cf-turnstile"
-         data-sitekey="0x4AAAAAAE-3xSyzkTbmlh41"
-         data-callback="onTurnstileSuccess"
-         data-theme="dark"
-         data-size="normal"></div>
-    <p class="error" id="errorMsg"></p>
+    <!-- Invisible modda widget görünmez ama bu div gerekli -->
+    <div id="turnstile-container"></div>
   </div>
 
   <script>
@@ -41,12 +36,25 @@
       }
     }
 
-    setTimeout(function() {
-      var errorEl = document.getElementById('errorMsg');
-      if (errorEl && errorEl.innerText === '') {
-        errorEl.innerText = 'Doğrulama yüklenemedi. İnternet bağlantınızı kontrol edin.';
+    function onTurnstileError(errorCode) {
+      console.error("Turnstile hatası: " + errorCode);
+    }
+
+    // Invisible modda explicit render gerekli
+    window.onload = function() {
+      if (typeof turnstile !== 'undefined') {
+        turnstile.render('#turnstile-container', {
+          sitekey: '0x4AAAAAAE-3xSyzkTbmlh41',
+          callback: onTurnstileSuccess,
+          'error-callback': onTurnstileError,
+          theme: 'dark',
+          size: 'invisible'
+        });
+      } else {
+        // API henüz yüklenmediyse bekle
+        setTimeout(arguments.callee, 100);
       }
-    }, 15000);
+    };
   </script>
 </body>
 </html>
