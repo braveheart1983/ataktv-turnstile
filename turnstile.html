@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #0F172A;
+      color: #E2E8F0;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+    }
+    h3 { color: #38BDF8; font-weight: 500; }
+    .container { text-align: center; padding: 20px; }
+    .loading { color: #94A3B8; font-size: 14px; }
+    .error { color: #EF9A9A; font-size: 14px; margin-top: 10px; }
+  </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+  <div class="container">
+    <h3>🔒 Güvenlik Doğrulaması</h3>
+    <p class="loading">Lütfen bekleyin...</p>
+    <div class="cf-turnstile"
+         data-sitekey="0x4AAAAAAE-3xSyzkTbmlh41"
+         data-callback="onTurnstileSuccess"
+         data-theme="dark"
+         data-size="normal"></div>
+    <p class="error" id="errorMsg"></p>
+  </div>
+
+  <script>
+    function onTurnstileSuccess(token) {
+      if (window.AndroidBridge && window.AndroidBridge.onTokenReceived) {
+        window.AndroidBridge.onTokenReceived(token);
+      }
+    }
+
+    setTimeout(function() {
+      var errorEl = document.getElementById('errorMsg');
+      if (errorEl && errorEl.innerText === '') {
+        errorEl.innerText = 'Doğrulama yüklenemedi. İnternet bağlantınızı kontrol edin.';
+      }
+    }, 15000);
+  </script>
+</body>
+</html>
